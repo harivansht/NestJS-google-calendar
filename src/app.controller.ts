@@ -1,14 +1,18 @@
 // src/google/google.controller.ts
 import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
 import { GoogleService } from './app.service';
+import { WhatsAppService } from './whatsapp.service';
 
 @Controller('google')
 export class GoogleController {
-  constructor(private readonly googleService: GoogleService) {}
+  constructor(
+    private readonly googleService: GoogleService,
+    private readonly whatsappService: WhatsAppService,
+  ) {}
 
   @Get('auth')
   async auth(@Res() res) {
-    const url = this.googleService.generateAuthUrl();
+    const url = await this.googleService.generateAuthUrl();
     return res.redirect(url);
   }
 
@@ -36,5 +40,41 @@ export class GoogleController {
       payload,
       userRefreshToken,
     );
+  }
+
+  @Post('send')
+  async send(
+    @Body()
+    body: {
+      to: string;
+      text?: string;
+      templateCode?: string;
+      bodyParams?: string[];
+    },
+  ) {
+    const { to, text, templateCode, bodyParams } = body;
+
+    if (!to) {
+      return { success: false, error: 'Missing "to" field' };
+    }
+
+    // Case 1: Template message
+    if (templateCode) {
+      return this.whatsappService.sendTemplateMessage(
+        to,
+        templateCode,
+        bodyParams || [],
+      );
+    }
+
+    // Case 2: Plain text message
+    if (text) {
+      return this.whatsappService.sendMessage(to, text);
+    }
+
+    return {
+      success: false,
+      error: 'Either "text" or "templateCode" must be provided',
+    };
   }
 }
