@@ -52,7 +52,7 @@ export class GoogleService {
     //   "location": "https://maps.app.goo.gl/JtMGFaefP3kDbMnK6",
     //   "startTime": "2025-09-07T10:00:00+05:30",
     // "endTime":   "2025-09-07T11:00:00+05:30",
-    //   "attendees": ["harivanshthakur07@gmail.com"]
+    //   "attendees": [""]
     // }'
 
     const res = await calendar.events.insert({
@@ -81,7 +81,6 @@ export class GoogleService {
 
     //   "startTime": "2025-09-07T10:00:00+05:30",
     // "endTime":   "2025-09-07T11:00:00+05:30",
-    //   "attendees": ["harivanshthakur07@gmail.com"]
     // }'
 
     const event = {
